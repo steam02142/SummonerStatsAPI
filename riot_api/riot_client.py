@@ -12,4 +12,4 @@ def get_player_puuid(riot_id: str, tagline: str) -> str:
     api_url = base_url + riot_id + '/' + tagline + '/' + '?api_key=' + api_key
     response = requests.get(api_url)
     player_puuid = response.json()['puuid']
-    print("puuid = " + player_puuid)
+    return player_puuid
