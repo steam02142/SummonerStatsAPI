@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from riot_api.riot_client import get_player_puuid
+from riot_api.riot_client import get_player_puuid, get_match_data
 
 riot_id = "wumpus"
 tagline = "1112"
@@ -18,7 +18,7 @@ app.add_middleware(
 )
 
 @app.get("/puuid")
-def fetch_puuid(riot_id: str, tagline: str):
+def fetch_puuid(riot_id, tagline):
     try:
         puuid = get_player_puuid(riot_id, tagline)
 
@@ -33,3 +33,7 @@ def fetch_puuid(riot_id: str, tagline: str):
             "id": riot_id,
             "tagline": tagline
         }
+
+@app.get("/titlecard")
+def fetch_titlecard(puuid, num_matches):
+    return get_match_data(puuid, num_matches)
