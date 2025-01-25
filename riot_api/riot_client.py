@@ -63,15 +63,18 @@ def parse_match_data(puuid, match_json):
     for player in players:
         riotName = player['riotIdGameName']
         championName = player['championName']
+        championId = player['championId']
         parsed_data["all_players"].append({
             "riotName": riotName,
-            "championName": championName
+            #"championName": championName,
+            "championId": championId
         })
 
 
 
     parsed_data["primary_player_stats"] = {
-        "championName": primary_player["championName"],
+        #"championName": primary_player["championName"],
+        "championId": primary_player["championId"],
         "playerLevel": primary_player["summonerLevel"],
         "kills": primary_player["kills"],
         "deaths": primary_player["deaths"],
@@ -86,7 +89,6 @@ def parse_match_data(puuid, match_json):
         "summoner1": primary_player["summoner1Id"],
         "summoner2": primary_player["summoner2Id"]
     }
-    # championName = players['championName']
     return parsed_data
 
 def process_matches(puuid, num_matches, region):
@@ -103,9 +105,9 @@ def process_matches(puuid, num_matches, region):
         replace_summoners(parsed_match_data['primary_player_stats'], summoner_mapping)
         replace_items(parsed_match_data['primary_player_stats'], item_mapping)
         all_match_data.append(parsed_match_data)
-        add_player_icon(parsed_match_data['all_players'])
+        add_champion_name_and_icon(parsed_match_data['all_players'], parsed_match_data['primary_player_stats'])
 
-    print(parsed_match_data['all_players'])
+    # print(parsed_match_data['all_players'])
     return all_match_data
 
 def get_summoner_id_mapping():
@@ -162,21 +164,39 @@ def replace_summoners(player_data, summoner_mapping):
     player_data['summoner1'] = summoner_dict.get(player_data['summoner1'])
     player_data['summoner2'] = summoner_dict.get(player_data['summoner2'])
 
+# NOTE: These do not follow a consistent naming convention, instead use:
+# 1. https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-summary.json
+# 2. https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/
 
-def add_player_icon(all_players):
-    base = "https://raw.communitydragon.org/latest/game/assets/characters/"
-    circle_image = "_circle_0.png"
-    square_image = "_square_0.png"
-    hud = "/hud/"
+def add_champion_name_and_icon(all_players, primary_player):
+    champions = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-summary.json"
+    champion_portrait = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/"
+    champions_json = requests.get(champions).json()
+    champion_dict = {champion['id']: champion for champion in champions_json}
 
     for player in all_players:
-        champion = player['championName'].lower()
-        square_url = base + champion + hud + champion + square_image
-        circle_url = base + champion + hud + champion + circle_image
+        champion_data = champion_dict.get(player['championId'])
+        icon_name = champion_data['squarePortraitPath'].split('/')[::-1][0]
+        icon_path = champion_portrait + icon_name
         player.update({
-            "square_icon": square_url,
-            "circle_icon": circle_url
+            "champion_icon": icon_path,
+            "championName": champion_data['name']
         })
+    
+    # for the primary player
+    champion_data = champion_dict.get(primary_player['championId'])
+    icon_name = champion_data['squarePortraitPath'].split('/')[::-1][0]
+    icon_path = champion_portrait + icon_name
+    primary_player.update({
+        "champion_icon": icon_path,
+        "championName": champion_data['name']
+    })
+
+    
+    pprint.pprint(primary_player)
+
+    
+    return champions_json
         
     
 
