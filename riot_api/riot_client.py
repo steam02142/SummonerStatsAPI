@@ -32,10 +32,6 @@ def get_match_data_from_id(matchid, region):
     return match_data
     
 
-    # For card data we want:
-        #Individually: champ, win, level, kill participation, KDA, game type, when it was played (x minutes/hours/days/months ago)
-        #For the whole game: riotIdGameName, champ
-
 def parse_match_data(puuid, match_json):
     parsed_data = {
         "all_players": [],
@@ -56,7 +52,7 @@ def parse_match_data(puuid, match_json):
     parsed_data["match_stats"] = {
         "gameDuration": info["gameDuration"],
         "gameMode": info["gameMode"],
-        "gameName": info["gameName"],
+        "gameName": info["gameName"]
     }
 
     # get the names and champions of all the players in the game
@@ -66,14 +62,12 @@ def parse_match_data(puuid, match_json):
         championId = player['championId']
         parsed_data["all_players"].append({
             "riotName": riotName,
-            #"championName": championName,
             "championId": championId
         })
 
 
 
     parsed_data["primary_player_stats"] = {
-        #"championName": primary_player["championName"],
         "championId": primary_player["championId"],
         "playerLevel": primary_player["summonerLevel"],
         "kills": primary_player["kills"],
@@ -100,14 +94,11 @@ def process_matches(puuid, num_matches, region):
     for match_id in match_ids:
         match_data = get_match_data_from_id(match_id, region)
         parsed_match_data = parse_match_data(puuid, match_data)
-        # parsed match data is all the information we will be returning for each map. This will be packaged 
-        # up in a json with multiple indexes 
         replace_summoners(parsed_match_data['primary_player_stats'], summoner_mapping)
         replace_items(parsed_match_data['primary_player_stats'], item_mapping)
         all_match_data.append(parsed_match_data)
         add_champion_name_and_icon(parsed_match_data['all_players'], parsed_match_data['primary_player_stats'])
 
-    # print(parsed_match_data['all_players'])
     return all_match_data
 
 def get_summoner_id_mapping():
@@ -123,7 +114,6 @@ def get_summoner_id_mapping():
         summoners_dict.append( {
             "id": summoner['id'],
             "name": summoner['name'],
-            # get the last portion of the 
             "icon": icon_url
         })
     
@@ -142,7 +132,6 @@ def get_item_id_mapping():
         items_dict.append( {
             "id": item['id'],
             "name": item['name'],
-            # get the last portion of the 
             "icon": icon_url
         })
     
@@ -160,13 +149,8 @@ def replace_items(player_data, item_mapping):
 def replace_summoners(player_data, summoner_mapping):
     summoner_dict = {summoner['id']: summoner for summoner in summoner_mapping}
 
-    # Use `.get()` for efficient lookups
     player_data['summoner1'] = summoner_dict.get(player_data['summoner1'])
     player_data['summoner2'] = summoner_dict.get(player_data['summoner2'])
-
-# NOTE: These do not follow a consistent naming convention, instead use:
-# 1. https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-summary.json
-# 2. https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/
 
 def add_champion_name_and_icon(all_players, primary_player):
     champions = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-summary.json"
@@ -191,22 +175,12 @@ def add_champion_name_and_icon(all_players, primary_player):
         "champion_icon": icon_path,
         "championName": champion_data['name']
     })
-
-    
-    pprint.pprint(primary_player)
-
     
     return champions_json
         
     
 
-puuid = get_player_puuid("Wumpus", "1112", "americas")
-print(puuid)
-#last_match = get_recent_match_ids(puuid, 1, "americas")[0]
+# puuid = get_player_puuid("Wumpus", "1112", "americas")
+# print(puuid)
 
-
-# pprint.pprint(get_match_data_from_id(last_match, "americas"))
-
-process_matches(puuid, 2, "americas")
-
-#get_item_id_mapping()
+# process_matches(puuid, 2, "americas")
