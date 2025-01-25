@@ -103,7 +103,9 @@ def process_matches(puuid, num_matches, region):
         replace_summoners(parsed_match_data['primary_player_stats'], summoner_mapping)
         replace_items(parsed_match_data['primary_player_stats'], item_mapping)
         all_match_data.append(parsed_match_data)
+        add_player_icon(parsed_match_data['all_players'])
 
+    print(parsed_match_data['all_players'])
     return all_match_data
 
 def get_summoner_id_mapping():
@@ -144,6 +146,8 @@ def get_item_id_mapping():
     
     return items_dict
 
+
+
 def replace_items(player_data, item_mapping):
     item_dict = {item['id']: item for item in item_mapping}
 
@@ -157,6 +161,23 @@ def replace_summoners(player_data, summoner_mapping):
     # Use `.get()` for efficient lookups
     player_data['summoner1'] = summoner_dict.get(player_data['summoner1'])
     player_data['summoner2'] = summoner_dict.get(player_data['summoner2'])
+
+
+def add_player_icon(all_players):
+    base = "https://raw.communitydragon.org/latest/game/assets/characters/"
+    circle_image = "_circle_0.png"
+    square_image = "_square_0.png"
+    hud = "/hud/"
+
+    for player in all_players:
+        champion = player['championName'].lower()
+        square_url = base + champion + hud + champion + square_image
+        circle_url = base + champion + hud + champion + circle_image
+        player.update({
+            "square_icon": square_url,
+            "circle_icon": circle_url
+        })
+        
     
 
 puuid = get_player_puuid("Wumpus", "1112", "americas")
