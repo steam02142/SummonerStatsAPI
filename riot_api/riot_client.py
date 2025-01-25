@@ -102,8 +102,7 @@ def process_matches(puuid, num_matches, region):
         replace_summoners(parsed_match_data['primary_player_stats'], summoner_mapping)
         replace_items(parsed_match_data['primary_player_stats'], item_mapping)
 
-
-        pprint.pprint(parsed_match_data['primary_player_stats'])
+    return parsed_match_data
 
 def get_summoner_id_mapping():
     summoners = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/summoner-spells.json"
@@ -150,28 +149,21 @@ def replace_items(player_data, item_mapping):
         item = f"item{i}"
         player_data[item] = item_dict.get(player_data[item], None)
 
-    
-
 def replace_summoners(player_data, summoner_mapping):
     summoner_dict = {summoner['id']: summoner for summoner in summoner_mapping}
 
     # Use `.get()` for efficient lookups
     player_data['summoner1'] = summoner_dict.get(player_data['summoner1'])
     player_data['summoner2'] = summoner_dict.get(player_data['summoner2'])
-
-
-
-
     
 
-
-puuid = get_player_puuid("Wumpus", "1112", "americas")
-print(puuid)
+#puuid = get_player_puuid("Wumpus", "1112", "americas")
+#print(puuid)
 # last_match = get_recent_match_ids(puuid, 1, "americas")[0]
 
 
 # pprint.pprint(get_match_data_from_id(last_match, "americas"))
 
-process_matches(puuid, 1, "americas")
+#process_matches(puuid, 1, "americas")
 
-get_item_id_mapping()
+#get_item_id_mapping()
