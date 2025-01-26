@@ -62,10 +62,9 @@ def parse_match_data(puuid, match_json):
         championId = player['championId']
         parsed_data["all_players"].append({
             "riotName": riotName,
-            "championId": championId
+            "championId": championId,
+            "won": player["win"]
         })
-
-
 
     parsed_data["primary_player_stats"] = {
         "championId": primary_player["championId"],
@@ -73,15 +72,20 @@ def parse_match_data(puuid, match_json):
         "kills": primary_player["kills"],
         "deaths": primary_player["deaths"],
         "assists": primary_player["assists"],
+        "won": primary_player["win"],
         
-        "item0": primary_player["item0"],
-        "item1": primary_player["item1"],
-        "item2": primary_player["item2"],
-        "item3": primary_player["item3"],
-        "item4": primary_player["item4"],
-        "item5": primary_player["item5"],
-        "summoner1": primary_player["summoner1Id"],
-        "summoner2": primary_player["summoner2Id"]
+        "items": [
+            primary_player["item0"],
+            primary_player["item1"],
+            primary_player["item2"],
+            primary_player["item3"],
+            primary_player["item4"],
+            primary_player["item5"]
+        ],
+        "summoners": [
+            primary_player["summoner1Id"],
+            primary_player["summoner2Id"]
+        ]
     }
     return parsed_data
 
@@ -142,15 +146,19 @@ def get_item_id_mapping():
 def replace_items(player_data, item_mapping):
     item_dict = {item['id']: item for item in item_mapping}
 
-    for i in range(0, 6):
-        item = f"item{i}"
-        player_data[item] = item_dict.get(player_data[item], None)
+    for i in range(len(player_data['items'])):
+        if player_data['items'][i] != 0:  
+            item_name = item_dict.get(player_data['items'][i], {}).get('name', None)
+            player_data['items'][i] = item_name 
+        else:
+            player_data['items'][i] = None
 
 def replace_summoners(player_data, summoner_mapping):
     summoner_dict = {summoner['id']: summoner for summoner in summoner_mapping}
 
-    player_data['summoner1'] = summoner_dict.get(player_data['summoner1'])
-    player_data['summoner2'] = summoner_dict.get(player_data['summoner2'])
+    for i in range(len(player_data['summoners'])):
+        summoner_name =summoner_dict.get(player_data['summoners'][i])
+        player_data['summoners'][i] = summoner_name
 
 def add_champion_name_and_icon(all_players, primary_player):
     champions = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-summary.json"
@@ -180,7 +188,7 @@ def add_champion_name_and_icon(all_players, primary_player):
         
     
 
-# puuid = get_player_puuid("Wumpus", "1112", "americas")
-# print(puuid)
+puuid = get_player_puuid("Wumpus", "1112", "americas")
+print(puuid)
 
-# process_matches(puuid, 2, "americas")
+pprint.pprint(process_matches(puuid, 2, "americas"))
