@@ -148,8 +148,8 @@ def replace_items(player_data, item_mapping):
 
     for i in range(len(player_data['items'])):
         if player_data['items'][i] != 0:  
-            item_name = item_dict.get(player_data['items'][i], {}).get('name', None)
-            player_data['items'][i] = item_name 
+            item_info = item_dict.get(player_data['items'][i])
+            player_data['items'][i] = item_info 
         else:
             player_data['items'][i] = None
 
@@ -157,8 +157,8 @@ def replace_summoners(player_data, summoner_mapping):
     summoner_dict = {summoner['id']: summoner for summoner in summoner_mapping}
 
     for i in range(len(player_data['summoners'])):
-        summoner_name =summoner_dict.get(player_data['summoners'][i])
-        player_data['summoners'][i] = summoner_name
+        summoner_info =summoner_dict.get(player_data['summoners'][i])
+        player_data['summoners'][i] = summoner_info
 
 def add_champion_name_and_icon(all_players, primary_player):
     champions = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-summary.json"
