@@ -58,12 +58,12 @@ def parse_match_data(puuid, match_json):
     # get the names and champions of all the players in the game
     for player in players:
         riotName = player['riotIdGameName']
-        championName = player['championName']
         championId = player['championId']
         parsed_data["all_players"].append({
             "riotName": riotName,
             "championId": championId,
-            "won": player["win"]
+            "won": player["win"],
+            "participantId": player["participantId"]
         })
 
     parsed_data["primary_player_stats"] = {
