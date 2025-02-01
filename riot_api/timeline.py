@@ -19,7 +19,7 @@ def get_timeline(matchid, region):
     return timeline_json
 
 def parse_timeline(timeline_json):
-    player_timeline = {i: {"gold": [], "minionsKilled":[], "damageStats":[]} for i in range(1,11)}
+    player_timeline = {i: {"totalGold": [], "minionsKilled":[], "damageStats":[]} for i in range(1,11)}
 
 
     info = timeline_json["info"]
@@ -32,7 +32,7 @@ def parse_timeline(timeline_json):
         # print(participant_frames)
         for participant_id in participant_frames:
             player_data = participant_frames[participant_id]
-            player_timeline[int(participant_id)]["gold"].append(player_data["totalGold"])
+            player_timeline[int(participant_id)]["totalGold"].append(player_data["totalGold"])
             player_timeline[int(participant_id)]["minionsKilled"].append(player_data["minionsKilled"])
             player_timeline[int(participant_id)]["damageStats"].append(player_data["damageStats"])
     
@@ -47,8 +47,39 @@ def process_timeline(matchid, region):
     # add cached data to the dictionary, allowing us to add extra information to graphs
     for participant_id in timeline_data:
         timeline_data[int(participant_id)].update(championData = participant_data[matchid][int(participant_id) - 1]) 
+        # timeline_data[int(participant_id)].update(matchDuration = participant_data[matchid][int(participant_id) - 1]) 
 
-    return timeline_data
 
-# test_matchid = "NA1_5209966860"
-# process_timeline(test_matchid, "americas")
+    chart_data = transformForChart(timeline_data, matchid)
+
+    return chart_data
+
+def transformForChart(timeline_data, matchid):
+    # Determine game duration from how many minutes we collected data about gold
+    gameDuration = len(timeline_data[1]["totalGold"])
+    
+    chart_data = []
+
+    for minute in range(gameDuration):
+        minute_data = {"minute": minute}
+
+        for index in range(1, 11):
+            player_data = timeline_data[index]
+            
+            test = {}
+            # store each of the desired chart values
+            test[f"championName"] = participant_data[matchid][index- 1]["championName"]
+            test[f"gold"] = player_data["totalGold"][minute]
+            test[f"minionsKilled"] = player_data["minionsKilled"][minute]
+            minute_data.update({f"player{index}": test})
+
+         
+        chart_data.append(minute_data)
+
+    return chart_data
+        
+
+
+
+test_matchid = "NA1_5209966860"
+process_timeline(test_matchid, "americas")
