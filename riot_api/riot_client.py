@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 from typing import List
 import pprint
 import json
+from riot_api.cache import participant_data
+
 
 load_dotenv()
 
@@ -52,7 +54,8 @@ def parse_match_data(puuid, match_json):
     parsed_data["match_stats"] = {
         "gameDuration": info["gameDuration"],
         "gameMode": info["gameMode"],
-        "gameName": info["gameName"]
+        "gameName": info["gameName"],
+        "matchId": metadata["matchId"]
     }
 
     # get the names and champions of all the players in the game
@@ -102,6 +105,7 @@ def process_matches(puuid, num_matches, region):
         replace_items(parsed_match_data['primary_player_stats'], item_mapping)
         all_match_data.append(parsed_match_data)
         add_champion_name_and_icon(parsed_match_data['all_players'], parsed_match_data['primary_player_stats'])
+        cache_participant_data(parsed_match_data['all_players'], parsed_match_data['match_stats']["matchId"])
 
     return all_match_data
 
@@ -185,7 +189,9 @@ def add_champion_name_and_icon(all_players, primary_player):
     })
     
     return champions_json
-        
+
+def cache_participant_data(all_players, matchId):
+    participant_data[matchId] = all_players
     
 
 puuid = get_player_puuid("Wumpus", "1112", "americas")
