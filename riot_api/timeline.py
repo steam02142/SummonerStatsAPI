@@ -66,12 +66,11 @@ def transformForChart(timeline_data, matchid):
         for index in range(1, 11):
             player_data = timeline_data[index]
             
-            test = {}
             # store each of the desired chart values
-            test[f"championName"] = participant_data[matchid][index- 1]["championName"]
-            test[f"gold"] = player_data["totalGold"][minute]
-            test[f"minionsKilled"] = player_data["minionsKilled"][minute]
-            minute_data.update({f"player{index}": test})
+            championName = participant_data[matchid][index- 1]["championName"]
+            # minute_data["gold"] = player_data["totalGold"][minute]
+            # minute_data["minionsKilled"] = player_data["minionsKilled"][minute]
+            minute_data[championName] = player_data["totalGold"][minute]
 
          
         chart_data.append(minute_data)
