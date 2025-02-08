@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from riot_api.riot_client import get_player_puuid, process_matches
+from riot_api.riot_client import get_player_puuid, process_matches, get_profile_icon
 from riot_api.timeline import process_timeline
 
 riot_id = "wumpus"
@@ -43,3 +43,7 @@ def fetch_matches(puuid, num_matches, region):
 @app.get("/timeline")
 def fetch_timeline(matchid, region):
     return process_timeline(matchid, region)
+
+@app.get("/profileIcon")
+def fetch_profile_icon(puuid):
+    return get_profile_icon(puuid, "na1")

@@ -26,7 +26,6 @@ def get_recent_match_ids(puuid, num_matches, region):
     return response.json()
 
 def get_match_data_from_id(matchid, region):
-    # Currently only works with one match for testing
     root_url = f"https://{region}.api.riotgames.com"
     endpoint_url = f"/lol/match/v5/matches/{matchid}?api_key={api_key}"
     response = requests.get(root_url + endpoint_url)
@@ -156,7 +155,6 @@ def get_item_id_mapping():
     return items_dict
 
 
-
 def replace_items(player_data, item_mapping):
     item_dict = {item['id']: item for item in item_mapping}
 
@@ -202,6 +200,19 @@ def add_champion_name_and_icon(all_players, primary_player):
 
 def cache_participant_data(all_players, matchId):
     participant_data[matchId] = all_players
+
+
+def get_profile_icon(puuid, region):
+    root_url = f"https://{region}.api.riotgames.com"
+    endpoint_url = f"/lol/summoner/v4/summoners/by-puuid/{puuid}?api_key={api_key}"
+    response = requests.get(root_url + endpoint_url)
+    summoner_data = response.json()
+    profile_id = summoner_data["profileIconId"]
+
+    profile_icon_url = f"https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/{profile_id}.jpg"
+
+    
+    return profile_icon_url
     
 
 puuid = get_player_puuid("Wumpus", "1112", "americas")
