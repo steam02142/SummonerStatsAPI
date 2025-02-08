@@ -5,6 +5,7 @@ from typing import List
 import pprint
 import json
 from riot_api.cache import participant_data
+from numerize import numerize 
 
 
 load_dotenv()
@@ -69,13 +70,22 @@ def parse_match_data(puuid, match_json):
             "participantId": player["participantId"]
         })
 
+    kill_participation_percentage = round(primary_player["challenges"]["killParticipation"]*100, 1)
+    gold = numerize.numerize(primary_player["goldEarned"])
+    damage = numerize.numerize(primary_player["totalDamageDealtToChampions"])
+
     parsed_data["primary_player_stats"] = {
         "championId": primary_player["championId"],
         "playerLevel": primary_player["summonerLevel"],
+        "championLevel": primary_player["champLevel"],
         "kills": primary_player["kills"],
         "deaths": primary_player["deaths"],
         "assists": primary_player["assists"],
         "won": primary_player["win"],
+        "creepScore": primary_player["totalMinionsKilled"],
+        "damageDealt": damage,
+        "killParticipation": kill_participation_percentage,
+        "gold": gold,
         
         "items": [
             primary_player["item0"],

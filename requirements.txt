@@ -3,4 +3,5 @@ uvicorn
 requests
 python-dotenv
 pydantic 
+numerize
 # pandas - unsure if I will use this
