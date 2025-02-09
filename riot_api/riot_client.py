@@ -60,6 +60,8 @@ def parse_match_data(puuid, match_json):
 
     # get the names and champions of all the players in the game
     for player in players:
+        damage = numerize.numerize(player["totalDamageDealtToChampions"], 1)
+        gold = numerize.numerize(player["goldEarned"], 1)
         riotName = player['riotIdGameName']
         championId = player['championId']
         parsed_data["all_players"].append({
@@ -71,7 +73,8 @@ def parse_match_data(puuid, match_json):
             "deaths": player["deaths"],
             "assists": player["assists"],
             "creepScore": player["totalMinionsKilled"],
-            "damageDealt": player["totalDamageDealtToChampions"],
+            "damageDealt": damage,
+            "gold": gold,
             "items": [
                 player["item0"],
                 player["item1"],
