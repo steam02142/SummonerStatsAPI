@@ -91,6 +91,7 @@ def parse_match_data(puuid, match_json):
     damage = numerize.numerize(primary_player["totalDamageDealtToChampions"])
 
     parsed_data["primary_player_stats"] = {
+        "riotName": primary_player["riotIdGameName"],
         "championId": primary_player["championId"],
         "playerLevel": primary_player["summonerLevel"],
         "championLevel": primary_player["champLevel"],
