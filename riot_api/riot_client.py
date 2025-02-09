@@ -66,7 +66,24 @@ def parse_match_data(puuid, match_json):
             "riotName": riotName,
             "championId": championId,
             "won": player["win"],
-            "participantId": player["participantId"]
+            "participantId": player["participantId"],
+            "kills": player["kills"],
+            "deaths": player["deaths"],
+            "assists": player["assists"],
+            "creepScore": player["totalMinionsKilled"],
+            "damageDealt": player["totalDamageDealtToChampions"],
+            "items": [
+                player["item0"],
+                player["item1"],
+                player["item2"],
+                player["item3"],
+                player["item4"],
+                player["item5"]
+            ],
+            "summoners": [
+                player["summoner1Id"],
+                player["summoner2Id"]
+            ]
         })
 
     kill_participation_percentage = round(primary_player["challenges"]["killParticipation"]*100, 1)
@@ -112,6 +129,12 @@ def process_matches(puuid, num_matches, region):
         parsed_match_data = parse_match_data(puuid, match_data)
         replace_summoners(parsed_match_data['primary_player_stats'], summoner_mapping)
         replace_items(parsed_match_data['primary_player_stats'], item_mapping)
+
+        all_players = parsed_match_data['all_players']
+        for player in all_players:
+            replace_summoners(player, summoner_mapping)
+            replace_items(player, item_mapping)
+
         all_match_data.append(parsed_match_data)
         add_champion_name_and_icon(parsed_match_data['all_players'], parsed_match_data['primary_player_stats'])
         cache_participant_data(parsed_match_data['all_players'], parsed_match_data['match_stats']["matchId"])
