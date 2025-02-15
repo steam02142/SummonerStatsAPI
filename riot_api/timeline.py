@@ -19,7 +19,7 @@ def get_timeline(matchid, region):
     return timeline_json
 
 def parse_timeline(timeline_json):
-    player_timeline = {i: {"totalGold": [], "minionsKilled":[], "damageStats":[]} for i in range(1,11)}
+    player_timeline = {i: {"totalGold": [], "minionsKilled":[], "damageToChamps":[]} for i in range(1,11)}
 
 
     info = timeline_json["info"]
@@ -34,7 +34,7 @@ def parse_timeline(timeline_json):
             player_data = participant_frames[participant_id]
             player_timeline[int(participant_id)]["totalGold"].append(player_data["totalGold"])
             player_timeline[int(participant_id)]["minionsKilled"].append(player_data["minionsKilled"])
-            player_timeline[int(participant_id)]["damageStats"].append(player_data["damageStats"])
+            player_timeline[int(participant_id)]["damageToChamps"].append(player_data["damageStats"]["totalDamageDoneToChampions"])
     
     return player_timeline
 
@@ -57,25 +57,33 @@ def process_timeline(matchid, region):
 def transformForChart(timeline_data, matchid):
     # Determine game duration from how many minutes we collected data about gold
     gameDuration = len(timeline_data[1]["totalGold"])
+    values = ["totalGold", "minionsKilled", "damageToChamps"]
+
+    all_data = {
+        "totalGold": [],
+        "minionsKilled": [],
+        "damageToChamps": []
+    }
     
-    chart_data = []
-
     for minute in range(gameDuration):
-        minute_data = {"minute": minute}
+        for value in values:
+            minute_data = {"minute": minute}
 
-        for index in range(1, 11):
-            player_data = timeline_data[index]
+            for index in range(1, 11):
+                player_data = timeline_data[index]
+                
+                # store each of the desired chart values
+                championName = participant_data[matchid][index- 1]["championName"]
+                # minute_data["gold"] = player_data["totalGold"][minute]
+                # minute_data["minionsKilled"] = player_data["minionsKilled"][minute]
+                
+                minute_data[championName] = player_data[value][minute]
             
-            # store each of the desired chart values
-            championName = participant_data[matchid][index- 1]["championName"]
-            # minute_data["gold"] = player_data["totalGold"][minute]
-            # minute_data["minionsKilled"] = player_data["minionsKilled"][minute]
-            minute_data[championName] = player_data["totalGold"][minute]
+            all_data[value].append(minute_data)
 
-         
-        chart_data.append(minute_data)
+        
 
-    return chart_data
+    return all_data
         
 
 
