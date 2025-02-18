@@ -242,7 +242,7 @@ def get_profile_icon(puuid, region):
     return profile_icon_url
     
 
-puuid = get_player_puuid("Wumpus", "1112", "americas")
-print(puuid)
+# puuid = get_player_puuid("Wumpus", "1112", "americas")
+# print(puuid)
 
-pprint.pprint(process_matches(puuid, 2, "americas"))
+# pprint.pprint(process_matches(puuid, 2, "americas"))

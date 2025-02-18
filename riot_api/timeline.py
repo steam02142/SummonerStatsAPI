@@ -47,7 +47,6 @@ def process_timeline(matchid, region):
     # add cached data to the dictionary, allowing us to add extra information to graphs
     for participant_id in timeline_data:
         timeline_data[int(participant_id)].update(championData = participant_data[matchid][int(participant_id) - 1]) 
-        # timeline_data[int(participant_id)].update(matchDuration = participant_data[matchid][int(participant_id) - 1]) 
 
 
     chart_data = transformForChart(timeline_data, matchid)
@@ -74,9 +73,6 @@ def transformForChart(timeline_data, matchid):
                 
                 # store each of the desired chart values
                 championName = participant_data[matchid][index- 1]["championName"]
-                # minute_data["gold"] = player_data["totalGold"][minute]
-                # minute_data["minionsKilled"] = player_data["minionsKilled"][minute]
-                
                 minute_data[championName] = player_data[value][minute]
             
             all_data[value].append(minute_data)
@@ -88,5 +84,5 @@ def transformForChart(timeline_data, matchid):
 
 
 
-test_matchid = "NA1_5209966860"
-process_timeline(test_matchid, "americas")
+# test_matchid = "NA1_5209966860"
+# process_timeline(test_matchid, "americas")
