@@ -1,4 +1,4 @@
-# lol-stats-fastapi
+# SummonerStats API
 Use uvicorn main:app --reload
 Using allow_origins=["*"] for development
 
