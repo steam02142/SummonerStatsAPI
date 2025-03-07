@@ -3,11 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from riot_api.riot_client import get_player_puuid, process_matches, get_profile_icon
 from riot_api.timeline import process_timeline
 
-riot_id = "wumpus"
-tagline = "1112"
-
-#puuid = get_player_puuid(riot_id, tagline)
-
 app = FastAPI()
 
 app.add_middleware(

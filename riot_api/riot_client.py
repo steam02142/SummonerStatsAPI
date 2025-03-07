@@ -89,7 +89,11 @@ def parse_match_data(puuid, match_json):
             ]
         })
 
-    kill_participation_percentage = round(primary_player["challenges"]["killParticipation"]*100, 1)
+    if ("challenges" in primary_player):
+        kill_participation_percentage = round(primary_player["challenges"]["killParticipation"]*100, 1)
+    else:
+        kill_participation_percentage = "N/A"
+    
     gold = numerize.numerize(primary_player["goldEarned"])
     damage = numerize.numerize(primary_player["totalDamageDealtToChampions"])
 
@@ -242,7 +246,7 @@ def get_profile_icon(puuid, region):
     return profile_icon_url
     
 
-# puuid = get_player_puuid("Wumpus", "1112", "americas")
-# print(puuid)
+#puuid = get_player_puuid("Wumpus", "1112", "americas")
+#print(puuid)
 
-# pprint.pprint(process_matches(puuid, 2, "americas"))
+#pprint.pprint(process_matches(puuid, 1, "americas"))
